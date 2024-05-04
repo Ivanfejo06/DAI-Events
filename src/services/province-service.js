@@ -13,15 +13,15 @@ export default class ProvinceService {
         return returnObject;
     }
 
-    createAsync = async (entity) => {
+    createAsync = async (Province) => {
         const repo = new ProvinceRepository();
-        const createdEntity = await repo.createAsync(entity);
+        const createdEntity = await repo.createAsync(Province);
         return createdEntity;
     }
 
-    updateAsync = async (entity) => {
+    updateAsync = async (Province) => {
         const repo = new ProvinceRepository();
-        const updatedEntity = await repo.updateAsync(entity);
+        const updatedEntity = await repo.updateAsync(Province);
         return updatedEntity;
     }
 

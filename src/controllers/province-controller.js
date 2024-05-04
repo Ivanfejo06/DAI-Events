@@ -33,29 +33,22 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST "/api/province" CASI ANDA (Crea nulls)
+// POST "/api/province" CASI ANDA (Crea nulls y para el servidor)
 router.post('', async (req, res) => {
-    const { name, full_name, latitudeM, longitude, display_order } = req.body;
-
-    // Crea un nuevo objeto Province con los datos recibidos del cuerpo de la solicitud
-    const newProvince = new Province(name, full_name, latitudeM, longitude, display_order);
-
-    // Llama a la función createAsync con el nuevo objeto Province
-    const createdEntity = await svc.createAsync(newProvince);
-
-    // Verifica si la creación fue exitosa y envía la respuesta correspondiente
-    if (createdEntity) {
-        return res.status(201).json(createdEntity).send("Provincia creada exitosamente");
-    } else {
-        return res.status(400).send('Error Interno');
+    try {
+        const newProvince = await svc.createAsync(new Province(req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
+        return res.status(201).json(newProvince).send("Provincia creada exitosamente");
+    } catch (error) {
+        return res.status(500).send('Error Interno');
     }
 });
 
 
-// PUT "/api/province"
+// PUT "/api/province" CASI ANDA (Reconoce nulls desde el postman)
 router.put('', async (req, res) => {
     try {
-        const updatedEntity = await svc.updateAsync(new Province(req.body.id, req.body.name, req.body.full_name, req.body.latitudeM, req.body.longitude, req.body.display_order));
+        const updatedEntity = await svc.updateAsync(new Province(req.body.id, req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
+        console.log(new Province(req.body.id, req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
         if (updatedEntity) {
             return res.status(200).json(updatedEntity).send("Provincia actualizada exitosamente");
         } else {
