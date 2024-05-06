@@ -33,11 +33,11 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST "/api/province" CASI ANDA (Crea nulls y para el servidor)
+// POST "/api/province" CASI ANDA (Para el servidor)
 router.post('', async (req, res) => {
     try {
-        const newProvince = await svc.createAsync(new Province(req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
-        return res.status(201).json(newProvince).send("Provincia creada exitosamente");
+        await svc.createAsync(new Province(req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
+        return res.status(201).send("Provincia creada exitosamente");
     } catch (error) {
         return res.status(500).send('Error Interno');
     }
@@ -48,9 +48,8 @@ router.post('', async (req, res) => {
 router.put('', async (req, res) => {
     try {
         const updatedEntity = await svc.updateAsync(new Province(req.body.id, req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
-        console.log(new Province(req.body.id, req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
         if (updatedEntity) {
-            return res.status(200).json(updatedEntity).send("Provincia actualizada exitosamente");
+            return res.status(200).send("Provincia actualizada exitosamente");
         } else {
             return res.status(404).send('Not Found');
         }

@@ -45,13 +45,9 @@ export default class ProvinceRepository{
         try {
             await client.connect();
             const { name, full_name, latitude, longitude, display_order } = Province;
-            console.log(Province);
-    
             // En lugar de incluir el ID en la inserción, dejamos que la base de datos genere automáticamente el ID
             const sql = 'INSERT INTO provinces (name, full_name, latitude, longitude, display_order) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-            const result = await client.query(sql, [name, full_name, latitude, longitude, display_order]);
-    
-            return result.rows[0];
+            await client.query(sql, [name, full_name, latitude, longitude, display_order]);
         } catch (error) {
             console.log(error);
         } finally {
