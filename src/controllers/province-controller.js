@@ -36,25 +36,42 @@ router.get('/:id', async (req, res) => {
 // POST "/api/province" CASI ANDA (Para el servidor)
 router.post('', async (req, res) => {
     try {
-        await svc.createAsync(new Province(req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
+        const { name, full_name, latitude, longitude, display_order } = req.body;
+
+        // Validar parámetros
+        const validationError = validateProvinceParams(name, full_name, latitude, longitude, display_order);
+        if (validationError) {
+            return res.status(400).send(validationError);
+        }
+
+        // Crear la provincia si pasa las validaciones
+        await svc.createAsync(new Province(name, full_name, latitude, longitude, display_order));
+        
         return res.status(201).send("Provincia creada exitosamente");
     } catch (error) {
         return res.status(500).send('Error Interno');
     }
 });
 
-
 // PUT "/api/province" CASI ANDA (Reconoce nulls desde el postman)
 router.put('', async (req, res) => {
     try {
-        const updatedEntity = await svc.updateAsync(new Province(req.body.id, req.body.name, req.body.full_name, req.body.latitude, req.body.longitude, req.body.display_order));
+        const { id, name, full_name, latitude, longitude, display_order } = req.body;
+
+        // Validar parámetros
+        const validationError = validateProvinceParams(name, full_name, latitude, longitude, display_order);
+        if (validationError) {
+            return res.status(400).send(validationError);
+        }
+
+        const updatedEntity = await svc.updateAsync(new Province(id, name, full_name, latitude, longitude, display_order));
         if (updatedEntity) {
             return res.status(200).send("Provincia actualizada exitosamente");
         } else {
             return res.status(404).send('Not Found');
         }
     } catch (error) {
-        return res.status(400).send('Error Interno');
+        return res.status(500).send('Error Interno');
     }
 });
 
@@ -71,5 +88,25 @@ router.delete('/:id', async (req, res) => {
         return res.status(500).send('Error Interno');
     }
 });
+
+function validateProvinceParams(name, full_name, latitude, longitude, display_order) {
+    if (!name || name.length < 3) {
+        return 'El nombre de la provincia debe tener al menos 3 caracteres';
+    }
+    if (!full_name || full_name.length < 3) {
+        return 'El nombre completo de la provincia debe tener al menos 3 caracteres';
+    }
+    if (typeof latitude !== 'number') {
+        return 'La latitud debe ser un número';
+    }
+    if (typeof longitude !== 'number') {
+        return 'La longitud debe ser un número';
+    }
+    if (typeof display_order !== 'number' || display_order < 0) {
+        return 'El orden de visualización debe ser un número positivo';
+    }
+    // Puedes agregar más validaciones aquí según tus reglas de negocio
+    return null; // Si todas las validaciones pasan
+}
 
 export default router;
